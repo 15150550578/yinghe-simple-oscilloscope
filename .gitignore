@@ -1,0 +1,13 @@
+build/
+mx.scratch
+.vscode/
+.settings/
+*.o
+*.d
+*.elf
+*.hex
+*.bin
+*.map
+*.su
+.DS_Store
+Thumbs.db
