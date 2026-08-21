@@ -49,6 +49,9 @@ target_sources(${CMAKE_PROJECT_NAME} PRIVATE
     OLED/Src/oled_font.c
     Buzzer/Src/buzzer.c
     PWM_OUT/Src/pwm_out.c
+    ADC_SAMPLE/Src/adc_sample.c
+    AFE/Src/afe.c
+    WAVEFORM/Src/waveform.c
 )
 
 # Add include paths
@@ -56,6 +59,9 @@ target_include_directories(${CMAKE_PROJECT_NAME} PRIVATE
     OLED/Inc
     Buzzer/Inc
     PWM_OUT/Inc
+    ADC_SAMPLE/Inc
+    AFE/Inc
+    WAVEFORM/Inc
 )
 
 # Add project symbols (macros)

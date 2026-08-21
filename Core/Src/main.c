@@ -19,6 +19,7 @@
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
 #include "adc.h"
+#include "dma.h"
 #include "spi.h"
 #include "tim.h"
 #include "gpio.h"
@@ -28,6 +29,9 @@
 #include "oled_sh1107.h"
 #include "buzzer.h"
 #include "pwm_out.h"
+#include "adc_sample.h"
+#include "afe.h"
+#include "waveform.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -91,24 +95,41 @@ int main(void)
 
   /* Initialize all configured peripherals */
   MX_GPIO_Init();
+  MX_DMA_Init();
   MX_SPI2_Init();
   MX_ADC1_Init();
   MX_TIM3_Init();
   MX_TIM2_Init();
+  MX_TIM1_Init();
   /* USER CODE BEGIN 2 */
   OLED_Init();
   OLED_Clear();
-  OLED_ShowString(0, 0, "STM32G031", 1, OLED_COLOR_WHITE);
-  OLED_ShowString(0, 16, "SH1107 128x128", 1, OLED_COLOR_WHITE);
-  OLED_ShowString(0, 32, "Buzz PC15 Test", 1, OLED_COLOR_WHITE);
+  OLED_ShowString(0, 0, "CH1 Waveform", 1, OLED_COLOR_WHITE);
   OLED_Refresh();
 
-  // Buzz_Init();
-  // Buzz_BeepTimes(3U, 150U, 150U);  /* 上电嘀三声 */
-  // HAL_Delay(500);
-
   PWM_OUT_Init();
-  PWM_OUT_SetDuty(100U);  /* PB0 输出 50% 占空比 PWM，可按需修改 0~100 */
+  PWM_OUT_SetDuty(50U);
+
+  /* 前端默认低阻档 G=-0.1（大量程）；灵敏档用 AFE_RANGE_HI_Z */
+  afe_init();
+  (void)afe_set_range(AFE_CH1, AFE_RANGE_LO_Z);
+  (void)afe_set_range(AFE_CH2, AFE_RANGE_LO_Z);
+
+  if (adc_sample_calibrate() != ADC_SAMPLE_OK)
+  {
+    OLED_ShowString(0, 16, "ADC CAL FAIL", 1, OLED_COLOR_WHITE);
+    OLED_Refresh();
+    Error_Handler();
+  }
+
+  (void)adc_sample_set_rate(ADC_SAMPLE_RATE_HZ_DEFAULT);
+
+  if (adc_sample_start() != ADC_SAMPLE_OK)
+  {
+    OLED_ShowString(0, 16, "ADC START FAIL", 1, OLED_COLOR_WHITE);
+    OLED_Refresh();
+    Error_Handler();
+  }
   /* USER CODE END 2 */
 
   /* Infinite loop */
@@ -118,8 +139,16 @@ int main(void)
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
-    // Buzz_Beep(300U);
-    // HAL_Delay(700);
+    /* DMA 全缓冲就绪：降频绘制 Ain1 波形 */
+    if (adc_sample_take_full_flag() != 0U)
+    {
+      static uint32_t s_ui_div = 0U;
+      s_ui_div++;
+      if ((s_ui_div % WAVEFORM_UI_DIV) == 0U)
+      {
+        waveform_draw_ch1();
+      }
+    }
   }
   /* USER CODE END 3 */
 }
