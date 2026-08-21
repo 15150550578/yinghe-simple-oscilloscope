@@ -63,6 +63,10 @@ void Error_Handler(void);
 #define Buzz_PWM_GPIO_Port GPIOC
 #define Ain1_Pin GPIO_PIN_1
 #define Ain1_GPIO_Port GPIOA
+#define Key1_Pin GPIO_PIN_4
+#define Key1_GPIO_Port GPIOA
+#define Key2_Pin GPIO_PIN_5
+#define Key2_GPIO_Port GPIOA
 #define Ain2_Pin GPIO_PIN_7
 #define Ain2_GPIO_Port GPIOA
 #define PWM_OUT_Pin GPIO_PIN_0

@@ -32,6 +32,7 @@
 #include "adc_sample.h"
 #include "afe.h"
 #include "waveform.h"
+#include "key.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -104,11 +105,14 @@ int main(void)
   /* USER CODE BEGIN 2 */
   OLED_Init();
   OLED_Clear();
-  OLED_ShowString(0, 0, "CH1 Waveform", 1, OLED_COLOR_WHITE);
+  OLED_ShowString(0, 0, "Waveform", 1, OLED_COLOR_WHITE);
+  OLED_ShowString(0, 16, "K1:Rng K2:CH", 1, OLED_COLOR_WHITE);
   OLED_Refresh();
 
   PWM_OUT_Init();
   PWM_OUT_SetDuty(50U);
+
+  KEY_Init();
 
   /* 前端默认低阻档 G=-0.1（大量程）；灵敏档用 AFE_RANGE_HI_Z */
   afe_init();
@@ -139,14 +143,34 @@ int main(void)
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
-    /* DMA 全缓冲就绪：降频绘制 Ain1 波形 */
+    /* Key1：切换当前显示通道的量程；Key2：Ain1/Ain2 显示切换 */
+    if (KEY_TakeClick(KEY_ID_1) != 0U)
+    {
+      (void)afe_toggle_range(waveform_get_channel());
+      HAL_Delay(5);
+      waveform_draw();
+    }
+    if (KEY_TakeClick(KEY_ID_2) != 0U)
+    {
+      if (waveform_get_channel() == AFE_CH1)
+      {
+        waveform_set_channel(AFE_CH2);
+      }
+      else
+      {
+        waveform_set_channel(AFE_CH1);
+      }
+      waveform_draw();
+    }
+
+    /* DMA 全缓冲就绪：降频刷新当前通道波形 */
     if (adc_sample_take_full_flag() != 0U)
     {
       static uint32_t s_ui_div = 0U;
       s_ui_div++;
       if ((s_ui_div % WAVEFORM_UI_DIV) == 0U)
       {
-        waveform_draw_ch1();
+        waveform_draw();
       }
     }
   }

@@ -44,6 +44,18 @@ int32_t afe_set_range(afe_channel_t ch, afe_range_t range);
 afe_range_t afe_get_range(afe_channel_t ch);
 
 /**
+ * @brief  在高阻/低阻两档之间切换指定通道
+ * @retval 切换后的档位；通道非法时返回 AFE_RANGE_LO_Z
+ */
+afe_range_t afe_toggle_range(afe_channel_t ch);
+
+/**
+ * @brief  两通道同步切换量程（示波器常用）
+ * @retval 切换后的档位
+ */
+afe_range_t afe_toggle_range_both(void);
+
+/**
  * @brief  设置偏置电压（mV）；Bias1/Bias2 接近时可共用
  */
 void afe_set_bias_mv(int32_t bias_mv);

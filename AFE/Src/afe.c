@@ -47,6 +47,27 @@ afe_range_t afe_get_range(afe_channel_t ch)
   return s_range[ch];
 }
 
+afe_range_t afe_toggle_range(afe_channel_t ch)
+{
+  afe_range_t next;
+
+  if (ch > AFE_CH2)
+  {
+    return AFE_RANGE_LO_Z;
+  }
+
+  next = (s_range[ch] == AFE_RANGE_HI_Z) ? AFE_RANGE_LO_Z : AFE_RANGE_HI_Z;
+  (void)afe_set_range(ch, next);
+  return next;
+}
+
+afe_range_t afe_toggle_range_both(void)
+{
+  afe_range_t next = afe_toggle_range(AFE_CH1);
+  (void)afe_set_range(AFE_CH2, next);
+  return next;
+}
+
 void afe_set_bias_mv(int32_t bias_mv)
 {
   if (bias_mv < 500)

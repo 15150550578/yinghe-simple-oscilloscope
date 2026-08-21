@@ -5,11 +5,11 @@
 #include "adc_sample_config.h"
 
 /*
- * Ain1 波形显示布局（128×128 SH1107）
- *   顶栏 y=0..15：CH1 瞬时 mV
+ * 单通道波形显示（Key1 切量程，Key2 切 Ain1/Ain2 显示）
+ *   顶栏 y=0..15：通道名、瞬时 mV、当前档位 G
  *   波形区 y=16..127：边框、0V 中线、折线
- * 横轴 128 列；触发：前半缓冲找上升沿过 0 mV，再取 128 点
- * 纵轴固定满幅：高阻 ±3300 mV，低阻 ±16500 mV
+ * 横轴 128 列；触发：上升沿过 0 mV
+ * 纵轴：高阻 ±3300 mV，低阻 ±16500 mV（跟当前显示通道档位）
  */
 
 #define WAVEFORM_STATUS_H          (16U)
@@ -21,11 +21,9 @@
 #define WAVEFORM_DRAW_POINTS       (128U)
 #define WAVEFORM_TRIG_SEARCH_MAX   (128U)
 
-/* 固定满幅（相对 0 V），单位 mV */
 #define WAVEFORM_FULL_MV_HI_Z      (3300)
 #define WAVEFORM_FULL_MV_LO_Z      (16500)
 
-/* 主循环每 N 次全缓冲才刷一次屏 */
 #define WAVEFORM_UI_DIV            (20U)
 
 #endif /* WAVEFORM_CONFIG_H */

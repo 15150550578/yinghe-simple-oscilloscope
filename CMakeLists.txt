@@ -52,6 +52,7 @@ target_sources(${CMAKE_PROJECT_NAME} PRIVATE
     ADC_SAMPLE/Src/adc_sample.c
     AFE/Src/afe.c
     WAVEFORM/Src/waveform.c
+    KEY/Src/key.c
 )
 
 # Add include paths
@@ -62,6 +63,7 @@ target_include_directories(${CMAKE_PROJECT_NAME} PRIVATE
     ADC_SAMPLE/Inc
     AFE/Inc
     WAVEFORM/Inc
+    KEY/Inc
 )
 
 # Add project symbols (macros)

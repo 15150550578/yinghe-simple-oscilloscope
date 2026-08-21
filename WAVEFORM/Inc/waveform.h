@@ -3,11 +3,21 @@
 
 #include <stdint.h>
 #include "waveform_config.h"
+#include "afe.h"
 
 /**
- * @brief  根据当前 DMA 缓冲绘制 Ain1 波形（含顶栏 mV）
- * @note   内部完成清屏、触发定位、折线绘制；调用后需已可 Refresh
+ * @brief  选择要显示的通道（AFE_CH1 / AFE_CH2）
  */
-void waveform_draw_ch1(void);
+void waveform_set_channel(afe_channel_t ch);
+
+/**
+ * @brief  当前显示通道
+ */
+afe_channel_t waveform_get_channel(void);
+
+/**
+ * @brief  绘制当前选中通道的波形（含顶栏）
+ */
+void waveform_draw(void);
 
 #endif /* WAVEFORM_H */
